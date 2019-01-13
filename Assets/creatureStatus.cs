@@ -9,6 +9,9 @@ public class creatureStatus : MonoBehaviour {
 	private TextMesh targetText;
 	SpriteRenderer monsterRenderer;
 
+	// 速度
+	public Vector2 SPEED = new Vector2(0.3f, 0.3f);
+
     int ageCount = 0;
     float countTime = 0;
 	int time = 0;
@@ -123,6 +126,9 @@ public class creatureStatus : MonoBehaviour {
 			}
 			
 			countTime = 0.0f;
+
+			// 移動処理
+			Move();
 		}
 
 		// creature is hungry
@@ -243,5 +249,42 @@ public class creatureStatus : MonoBehaviour {
 
 		updateHungryText(hungryCount);
 		updateStressText(stressCount);
+	}
+
+	bool toLeft = true;
+
+	// 移動関数
+	void Move(){
+		// 現在位置をPositionに代入
+		Vector2 Position = monsterObject.transform.position;
+		
+		if(Position.x < -0.8f){
+			toLeft = false;
+		} else if (Position.x > 0.8f){
+			toLeft = true;
+		}
+
+		if(toLeft){
+			Position.x -= SPEED.x * 10;
+		}else{
+			Position.x += SPEED.x * 10;
+		}
+/*
+		// 左キーを押し続けていたら
+		if(Input.GetKey("left")){
+			// 代入したPositionに対して加算減算を行う
+			Position.x -= SPEED.x;
+		} else if(Input.GetKey("right")){ // 右キーを押し続けていたら
+			// 代入したPositionに対して加算減算を行う
+			Position.x += SPEED.x;
+		} else if(Input.GetKey("up")){ // 上キーを押し続けていたら
+			// 代入したPositionに対して加算減算を行う
+			Position.y += SPEED.y;
+		} else if(Input.GetKey("down")){ // 下キーを押し続けていたら
+			// 代入したPositionに対して加算減算を行う
+			Position.y -= SPEED.y;
+		}
+ */		// 現在の位置に加算減算を行ったPositionを代入する
+		monsterObject.transform.position = Position;
 	}
 }
