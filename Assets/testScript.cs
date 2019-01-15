@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class testScript : MonoBehaviour {
+
+public class TestScript : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
