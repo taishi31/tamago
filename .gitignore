@@ -1,0 +1,10 @@
+.DS_Store
+ProjectSettings/ProjectVersion.txt
+Library/
+Packages/
+Temp/
+Logs/
+Assets/VSCode/
+Assets/VSCode.meta
+Assembly-CSharp.csproj
+tamago.sln
