@@ -150,7 +150,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.MyCompany.Tamago
     Standalone: com.Company.ProductName
-    iOS: com.MountainForest.TamagoForIOS
+    iOS: com.MountainForest.Tamago
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
