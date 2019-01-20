@@ -22,28 +22,27 @@ public class creatureStatus : MonoBehaviour
     public Sprite monster8Image;
 
     GameObject foodObject = null;  // 餌を与える
-    GameObject meetObject = null;  // 肉を与える
-    GameObject vesetableObject = null; // 野菜を与える
-    GameObject treatObject = null; // おやつを与える
-    GameObject lightObject = null;
     GameObject ageObject = null;
     GameObject timeObject = null;
     GameObject wakeupObject = null;
-    GameObject sleepObject = null;
+    GameObject pooObject = null;
+    GameObject sickObject = null;
     GameObject hungryObject = null;
-    GameObject stressObject = null;
-    GameObject unhappyObject = null;
     GameObject monsterObject = null;
+    GameObject activePtObject = null;
+    GameObject fitnessObject = null;
+    GameObject inteligenceObject = null;
+    GameObject intimacyObject = null;
+    GameObject healthinessObject = null;
+    GameObject timestoprObject = null;
     SpriteRenderer monsterRenderer;
 
 
     float countTime = 0;    //
     int totalTime = 0;      // 
     int ageCount = 0;       //
-    int goodSleepTime = 0;  //
 
     bool isSleeping = false; // 寝てるか
-    bool isLightOn = false;  // ライト点灯状態
     bool isSick = false;     // 病気か
     bool hasPoo = false;     // うんちの有無
     bool toLeft = true;      // 左方向への移動フラグ
@@ -53,38 +52,42 @@ public class creatureStatus : MonoBehaviour
     int hungryReduceTime = 0;
     int foodCount = 0;
 
-    int stressCount = 0;
-    int stressCountMax = 4;
-    int stressIncreaseTime = 0;
-    
-    int unhappyCount = 0;
-
     int activePt = 5;   // 行動ポイント(0 to 5)
-    int fitness = 0;     // 体力(0 to 10)
-    int inteligence = 0; // 知能(0 to 10)
-    int intimacy = 0;    // 親密(0 to 10)
+    int activePtMax = 5;
+    int activePtIncreaseTime = 0;
+
+    int fitness = 0;     // 体力(0 to 100)
+    int inteligence = 0; // 知能(0 to 100)
+    int intimacy = 0;    // 親密(0 to 100)
     int healthiness = 10; // 健康(0 to 10)
 
+    int fitnessMax = 100;
+    int inteligenceMax = 100;
+    int intimacyMax = 100;
+    int healthinessMax = 10;
+
+    bool isStop = false;
 
     // Use this for initialization
     void Start()
     {
         // initialize objects
         foodObject = GameObject.Find("food");
-        meetObject = GameObject.Find("meet");
-        vesetableObject = GameObject.Find("vesetable");
-        treatObject = GameObject.Find("treat");
-        lightObject = GameObject.Find("light");
         ageObject = GameObject.Find("age");
         timeObject = GameObject.Find("time");
         wakeupObject = GameObject.Find("wakeup");
-        sleepObject = GameObject.Find("sleep");
+        pooObject = GameObject.Find("poo");
+        sickObject = GameObject.Find("sick");
         hungryObject = GameObject.Find("hungry");
-        stressObject = GameObject.Find("stress");
-        unhappyObject = GameObject.Find("unhappy");
+        activePtObject = GameObject.Find("activityPt");
+        fitnessObject = GameObject.Find("fitness");
+        inteligenceObject = GameObject.Find("inteligence");
+        intimacyObject = GameObject.Find("intimacy");
+        healthinessObject = GameObject.Find("healthiness");
         monsterObject = GameObject.Find("monster");
         monsterRenderer = monsterObject.GetComponent<SpriteRenderer>();
-
+        timestoprObject = GameObject.Find("timeStop");
+                
         this.resetStatus();
         this.updateStatus();
         this.updateText();
@@ -100,18 +103,18 @@ public class creatureStatus : MonoBehaviour
         this.updateText();
     }
 
+    public void onClickStopButton()
+    {
+        this.isStop = !this.isStop;
+
+        var targetText = timestoprObject.GetComponentsInChildren<Text>();
+        targetText[0].text = this.isStop ? "start" : "stop" ;
+    }
 
     public void onClickClearButton()
     {
         this.resetStatus();
     }
-
-
-    public void onClickLightButton()
-    {
-        isLightOn = !isLightOn;
-    }
-
 
     public void onClickCleanupButton()
     {
@@ -121,37 +124,16 @@ public class creatureStatus : MonoBehaviour
         isSick = false;
     }
 
-
-    public void onClickPlayButton()
-    {
-        if (isSleeping)
-            return;
-
-        stressCount = GetInRanged(0, stressCountMax, stressCount - 1);
-    }
-
-
-    public void onClickFoodButton()
-    {
-        if (isSleeping || hungryCount >= hungryCountMax)
-            return;
-
-        hungryCount++;
-
-        foodCount++;
-    }
-
-
     public void onClickMeetButton()
     {
         if (isSleeping || hungryCount >= hungryCountMax)
             return;
 
         // 体力+2, 知力-1, 健康+1, 親密+1, 満腹+1
-        fitness     = GetInRanged(0, 10, fitness +2);
-        inteligence = GetInRanged(0, 10, fitness -1);
-        healthiness = GetInRanged(0, 10, fitness +1);
-        intimacy    = GetInRanged(0, 10, fitness +1);
+        fitness     = GetInRanged(0, fitnessMax, fitness +2);
+        inteligence = GetInRanged(0, inteligenceMax, inteligence -1);
+        healthiness = GetInRanged(0, healthinessMax, healthiness +1);
+        intimacy    = GetInRanged(0, intimacyMax, intimacy +1);
         hungryCount = GetInRanged(0, hungryCountMax, hungryCount +1);
 
         foodCount++;
@@ -164,10 +146,10 @@ public class creatureStatus : MonoBehaviour
             return;
 
         // 体力−1, 知力+1, 健康+2, 親密-1, 満腹+1
-        fitness     = GetInRanged(0, 100, fitness -1);
-        inteligence = GetInRanged(0, 100, fitness +1);
-        healthiness = GetInRanged(0, 100, fitness +2);
-        intimacy    = GetInRanged(0, 100, fitness -1);
+        fitness     = GetInRanged(0, fitnessMax, fitness -1);
+        inteligence = GetInRanged(0, inteligenceMax, inteligence +1);
+        healthiness = GetInRanged(0, healthinessMax, healthiness +2);
+        intimacy    = GetInRanged(0, intimacyMax, intimacy -1);
         hungryCount = GetInRanged(0, hungryCountMax, hungryCount +1);
 
         foodCount++;
@@ -180,10 +162,10 @@ public class creatureStatus : MonoBehaviour
             return;
 
         // 体力−1, 知力-1, 健康-1, 親密+2, 満腹+1
-        fitness     = GetInRanged(0, 10, fitness -1);
-        inteligence = GetInRanged(0, 10, fitness -1);
-        healthiness = GetInRanged(0, 10, fitness -1);
-        intimacy    = GetInRanged(0, 10, fitness -2);
+        fitness     = GetInRanged(0, fitnessMax, fitness -1);
+        inteligence = GetInRanged(0, inteligenceMax, inteligence -1);
+        healthiness = GetInRanged(0, healthinessMax, healthiness -1);
+        intimacy    = GetInRanged(0, intimacyMax, intimacy +2);
         hungryCount = GetInRanged(0, hungryCountMax, hungryCount +1);
 
         foodCount++;
@@ -196,9 +178,9 @@ public class creatureStatus : MonoBehaviour
             return;
 
         // 体力-1, 知力+3, AP-1
-        fitness     = GetInRanged(0, 10, fitness -1);
-        inteligence = GetInRanged(0, 10, fitness +3);
-        activePt    = GetInRanged(0,  5, activePt -1);
+        fitness     = GetInRanged(0, fitnessMax, fitness -1);
+        inteligence = GetInRanged(0, inteligenceMax, inteligence +3);
+        activePt    = GetInRanged(0, activePtMax, activePt -1);
     }
 
 
@@ -208,9 +190,9 @@ public class creatureStatus : MonoBehaviour
             return;
 
         // 体力+3, 知力-1, AP-1
-        fitness     = GetInRanged(0, 10, fitness +3);
-        inteligence = GetInRanged(0, 10, fitness -1);
-        activePt    = GetInRanged(0,  5, activePt -1);
+        fitness     = GetInRanged(0, fitnessMax, fitness +3);
+        inteligence = GetInRanged(0, inteligenceMax, inteligence -1);
+        activePt    = GetInRanged(0, activePtMax, activePt -1);
     }
 
 
@@ -219,10 +201,8 @@ public class creatureStatus : MonoBehaviour
         countTime = 0;
         totalTime = 0;
         ageCount = 0;
-        goodSleepTime = 0;
 
         isSleeping = false;
-        isLightOn = false;
         isSick = false;
         hasPoo = false;
         toLeft = true;
@@ -230,9 +210,6 @@ public class creatureStatus : MonoBehaviour
         hungryCount = 0;
         hungryReduceTime = 0;
         foodCount = 0;
-        stressCount = 0;
-        stressIncreaseTime = 0;
-        unhappyCount = 0;
 
         activePt = 5;
         fitness = 0;
@@ -255,7 +232,20 @@ public class creatureStatus : MonoBehaviour
         // 24hour is a day
 
         // ゲーム内時間の更新
-        totalTime++;
+#if DEBUG
+        if(!this.isStop){
+#endif
+            totalTime++;
+
+            // 満腹度の更新
+            if(hungryCount > 0)
+                hungryReduceTime++;
+
+            if(activePt < activePtMax)
+                activePtIncreaseTime++;
+#if DEBUG
+        }
+#endif
         int time = totalTime % 24;
 
         // 年齢の更新
@@ -266,35 +256,22 @@ public class creatureStatus : MonoBehaviour
         // 睡眠状態の更新
         // creature is sleeping while 22:00 - 08:00
         isSleeping = ((time >= 22 && time < 24) || (time >= 0 && time < 8));
-        if(isSleeping && ! isLightOn )
-            goodSleepTime++;
 
-        // 満腹度の更新
-        if(hungryCount > 0)
-            hungryReduceTime++;
         if(hungryReduceTime >= 4){
             if(hungryCount > 0)
                 hungryCount--;
             hungryReduceTime = 0;
         }
 
-        // ストレス値の更新
-        if( ! isSleeping)
-            stressIncreaseTime++;
-        if(stressIncreaseTime >= 5){
-            if(stressCount < stressCountMax){
-                stressCount++;
-            }
-            else if(stressCount >= stressCountMax){
-                unhappyCount++;
-
-            }
-            stressIncreaseTime = 0;
+        // アクティビティポイントの更新
+        if(activePtIncreaseTime >= 2){
+            activePt++;
+            activePtIncreaseTime = 0;
         }
 
         // うんちの発生(6時間毎)
         bool half_day_passed = (totalTime > 0 && time % 6 == 0);
-        if ( ! hasPoo)
+        if ( ! hasPoo && !isSleeping)
             hasPoo = half_day_passed;
 
         // 病気の発生(ランダム)
@@ -310,17 +287,24 @@ public class creatureStatus : MonoBehaviour
             else if(ageCount == 3){
                 // age 3
                 monsterRenderer.sprite =
-                    (goodSleepTime > 20 ? monster3Image : monster4Image);
+                    (fitness > 20 ? monster3Image : monster4Image);
             }
             else if(ageCount == 5){
                 // age 5
                 monsterRenderer.sprite =
-                    (unhappyCount > 6 ? monster5Image : monster6Image);
+                    (inteligence > 6 ? monster5Image : monster6Image);
             }
         }
 
         // 移動処理
+#if DEBUG
+        if(!this.isStop){
+#endif
         this.move();
+#if DEBUG
+        }
+#endif
+
     }
 
 
@@ -335,37 +319,37 @@ public class creatureStatus : MonoBehaviour
         targetText = ageObject.GetComponent<TextMesh>();
         targetText.text = "年齢 " + ageCount.ToString("F0") + " 歳";
 
-        targetText = foodObject.GetComponent<TextMesh>();
-        targetText.text = "エサ " + foodCount.ToString() + " 個";
+        targetText = activePtObject.GetComponent<TextMesh>();
+        targetText.text = "AP " + activePt.ToString("F0") + " Pt";
 
-        targetText = lightObject.GetComponent<TextMesh>();
-        targetText.text = "電気 " + (isLightOn ? "ON" : "OFF");
+        targetText = fitnessObject.GetComponent<TextMesh>();
+        targetText.text = "体力 " + fitness.ToString("F0");
 
-        targetText = unhappyObject.GetComponent<TextMesh>();
-        targetText.text = "不満 " + unhappyCount.ToString() + " 回";
+        targetText = inteligenceObject.GetComponent<TextMesh>();
+        targetText.text = "知力 " + inteligence.ToString("F0");
 
-        targetText = sleepObject.GetComponent<TextMesh>();
-        targetText.text = "快眠 " + goodSleepTime.ToString("F0") + "ｈ";
+        targetText = healthinessObject.GetComponent<TextMesh>();
+        targetText.text = "健康 " + healthiness.ToString("F0");
+
+        targetText = intimacyObject.GetComponent<TextMesh>();
+        targetText.text = "親密 " + intimacy.ToString("F0");
+
 
         // TODO: 病気、うんちのステータスをとりあえず wakeupObject に表示
         targetText = wakeupObject.GetComponent<TextMesh>();
-        string s = "";
-        if (isSleeping) s += "寝てる ";
-        if (isSick) s += "病気 ";
-        if (hasPoo) s += "うんち ";
-        targetText.text = s;
+        targetText.text = isSleeping ? "寝てる" : "起きてる";
+
+        targetText = pooObject.GetComponent<TextMesh>();
+        targetText.text = hasPoo ? "うんち" : "";
+
+        targetText = sickObject.GetComponent<TextMesh>();
+        targetText.text = isSick ? "病気" : "";
 
         targetText = hungryObject.GetComponent<TextMesh>();
         string htext = "お腹 ";
         for(int i = 0; i < hungryCountMax; i++)
             htext += i < hungryCount ? " ●" : " ○";
         targetText.text = htext;
-
-        targetText = stressObject.GetComponent<TextMesh>();
-        string stext = "ストレス";
-        for(int i = 0; i < stressCountMax; i++)
-            stext += i < stressCount ? " ●" : " ○";
-        targetText.text = stext;
     }
 
 
